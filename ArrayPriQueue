@@ -1,0 +1,195 @@
+//school jar contains this import
+import BasicIO.*;
+
+/**
+ * This class implements a priority queue using an array version of a min-heap.
+ * It reads numbers from a file, stores the numbers in the array, and prints a series of steps to the user.
+ *
+ * @author Rafael Jover
+ * @version 1.0
+ * @course COSC 2P03
+ * @since Nov 10th, 2023
+ */
+public class ArrayPriQueue {
+    //instance variables
+    private int size = 0;
+    private int[] arr;
+    private ASCIIDataFile input = new ASCIIDataFile();
+
+    public ArrayPriQueue() {
+        String inputNums = "";
+
+        // reading input file
+        while (true) {
+            size = input.readInt();
+            if (input.isEOF()) break;
+            inputNums = input.readLine(); //reading numbers
+        }
+
+        //storing each string(number) in a string array
+        String[] numbers = inputNums.split("\t");
+        arr = new int[numbers.length];
+
+        //inserting numbers in array
+        for (int i = 0; i < numbers.length; i++) {
+            insert(Integer.parseInt(numbers[i]));
+        }
+
+        traverse(); //prints all numbers in the array
+
+        //deleting item with the lowest priority from the array until it is empty
+        while (size > 0) {
+            int removedItem = deleteMin();
+            System.out.println("removing " + removedItem);
+            traverse(); //print new array
+        }
+
+        //re-inserting all items into the array again
+        System.out.println("----------INSERTED AGAIN----------");
+        for (int i = 0; i < numbers.length; i++) {
+            insert(Integer.parseInt(numbers[i]));
+        }
+        traverse();
+        buildHeap(); //building the min-heap from the array
+    }
+
+    /**
+     * Method that inserts a new item into the array and makes sure that it maintains
+     * its heap property
+     *
+     * @param item
+     */
+    public void insert(int item) {
+        if (size == arr.length - 1)
+            expandArray(arr.length * 2 + 1);
+
+        //Percolate up
+        int hole = ++size;
+        for (arr[0] = item; compare(item, arr[hole / 2]) < 0; hole /= 2) {
+            arr[hole] = arr[hole / 2];
+        }
+        arr[hole] = item; //inserting item at "hole"
+    }
+
+    /**
+     * Method that expands an array in size by creating a temporary
+     * array and copying whatever is in the temporary array to the original one.
+     *
+     * @param newSize
+     */
+    public void expandArray(int newSize) {
+        int[] temp = new int[newSize];
+
+        for (int i = 0; i < arr.length; i++) {
+            temp[i] = arr[i]; //copy elements
+        }
+        arr = temp; //copy array
+    }
+
+    /**
+     * Method that percolates an item down in the heap
+     *
+     * @param hole
+     */
+    public void percolateDown(int hole) {
+        int child;
+        int temp = arr[hole];
+
+        //percolating down the heap
+        for (; hole * 2 <= size; hole = child) {
+            child = hole * 2;
+            if (child != size && compare(arr[child + 1], arr[child]) < 0) {
+                child++;
+            }
+            if (compare(arr[child], temp) < 0) {
+                arr[hole] = arr[child];
+            } else {
+                break;
+            }
+        }
+        //filling the "hole"
+        arr[hole] = temp;
+    }
+
+    /**
+     * Method that compares two integers and returns an integer
+     * based on how the integers compare
+     *
+     * @param a, b
+     * @return integer (key)
+     */
+    public int compare(int a, int b) {
+        //comparisons
+        if (a < b) {
+            return -1;
+        } else if (a == b) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    /**
+     * Method that deletes the smallest item found from the array.
+     * The array is then readjusted to ensure it is still a min-heap.
+     *
+     * @return smallest item inside the array
+     */
+    public int deleteMin() {
+        //array is empty
+        if (size == 0) throw new ArrayIndexOutOfBoundsException("Min-Heap is empty already");
+
+        //find the minimum item and percolate down in the heap
+        int item = findMin();
+        arr[1] = arr[size--];
+        percolateDown(1);
+
+        return item;
+    }
+
+    /**
+     * Method that finds the smallest item (integer) in the array and returns it.
+     *
+     * @return smallest item inside the array
+     */
+    public int findMin() {
+        int min = arr[1];
+
+        //find the minimum value in the array
+        for (int i = 1; i <= size; i++) {
+            if (arr[i] < min) {
+                min = arr[i];
+            }
+        }
+        return min;
+    }
+
+    /**
+     * Method that traverses through the array and prints each item to the console
+     */
+    public void traverse() {
+        //print array elements
+        for (int i = 1; i <= size; i++) {
+            System.out.print(arr[i] + " ");
+        }
+        System.out.println();
+    }
+
+    /**
+     * Method that "builds the heap" from the array of items.
+     * It Maintains the heap order
+     */
+    public void buildHeap() {
+        System.out.println("building the heap");
+
+        //making sure to maintain heap property
+        for (int i = (size / 2 - 1); i >= 0; i--) {
+            percolateDown(i);
+            traverse();
+        }
+    }
+
+    public static void main(String[] args) {
+        ArrayPriQueue a = new ArrayPriQueue();
+    }
+}
