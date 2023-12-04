@@ -1,4 +1,4 @@
-//school jar contains this import
+//only import allowed for this project (from school's jar)
 import BasicIO.*;
 
 /**
@@ -11,6 +11,11 @@ import BasicIO.*;
  * @since Nov 10th, 2023
  */
 public class ArrayPriQueue {
+
+    public static void main(String[] args) {
+        ArrayPriQueue a = new ArrayPriQueue();
+    }
+
     //instance variables
     private int size = 0;
     private int[] arr;
@@ -187,9 +192,5 @@ public class ArrayPriQueue {
             percolateDown(i);
             traverse();
         }
-    }
-
-    public static void main(String[] args) {
-        ArrayPriQueue a = new ArrayPriQueue();
     }
 }
