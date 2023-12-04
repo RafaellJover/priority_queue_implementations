@@ -3,8 +3,7 @@ import BasicIO.*;
 
 /**
  * This class is an implementation of a priority queue by using a sorted linked list.
- * It reads input from a file, stores the numbers in the linked list, and prints a series
- * of steps to the user
+ * It reads input from a file, stores the numbers in the linked list, and prints a series of steps to the user
  *
  * @author Rafael Jover
  * @version 1.0
