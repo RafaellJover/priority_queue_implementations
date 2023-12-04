@@ -1,0 +1,107 @@
+//only import allowed for this project (from school's jar)
+import BasicIO.*;
+
+/**
+ * This class is an implementation of a priority queue by using a sorted linked list.
+ * It reads input from a file, stores the numbers in the linked list, and prints a series
+ * of steps to the user
+ *
+ * @author Rafael Jover
+ * @version 1.0
+ * @course COSC 2P03
+ * @since Nov 10th, 2023
+ */
+
+public class LinkedPriQueue {
+
+    public static void main(String[] args) {
+        LinkedPriQueue l = new LinkedPriQueue();
+    }
+
+    //instance variables
+    private Node list;
+    private ASCIIDataFile input = new ASCIIDataFile();
+
+    public LinkedPriQueue() {
+        int size = 0;
+        String inputNums = "";
+
+        // reading input file
+        while (true) {
+            size = input.readInt();
+            if (input.isEOF()) break;
+            inputNums = input.readLine(); //reading numbers
+        }
+
+        //storing each string(number) in a string array
+        String[] numbers = inputNums.split("\t");
+        size = numbers.length;
+
+        //start the linked list and insert each number in its appropriate place
+        list = null;
+        for (int i = 0; i < numbers.length; i++) {
+            Node n = new Node(numbers[i], null); //node with number
+
+            //list is empty
+            if (list == null || Integer.parseInt(n.item) <= Integer.parseInt(list.item)) {
+                list = insert(n, list);
+            }
+            //list is not empty
+            else {
+                Node p = list; //set pointer at start of list
+
+                //traverse through list to find where to insert the node
+                while (p.next != null && Integer.parseInt(p.next.item) < Integer.parseInt(n.item)) {
+                    p = p.next;
+                }
+
+                //insert node
+                p.next = insert(n, p.next);
+            }
+        }
+
+        traverse(); //print list with all elements
+
+        //deleting item with lowest priority
+        for (int i = 0; i < size; i++) {
+            deleteMin();
+            traverse(); //print list
+        }
+    }
+
+    /**
+     * method that returns the node to be inserted into the linked list.
+     *
+     * @param n, temp
+     * @return Node to be inserted
+     */
+    public Node insert(Node n, Node temp) {
+        n.next = temp;
+        temp = n;
+        return n;
+    }
+
+    /**
+     * Method that deletes the node with the least number, in this case the highest priority node
+     * and since we have a sorted linked list, the first node.
+     */
+    public void deleteMin() {
+        System.out.println("removing " + list.item);
+        list = list.next; //delete first node
+        System.out.println();
+    }
+
+    /**
+     * Method that traverses through the linked list and prints each node item to the console
+     * starting from the front of the list.
+     */
+    public void traverse() {
+        //print from front to rear
+        Node temp = list;
+        while (temp != null) {
+            System.out.print(temp.item + " ");
+            temp = temp.next;
+        }
+        System.out.println();
+    }
+}
